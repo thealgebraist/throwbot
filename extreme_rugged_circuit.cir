@@ -1,0 +1,37 @@
+* Extreme-Rugged 20cm Buggy @ -30C: Molicel P28A (0.54 Ohm @ -30C) + 1000uF Cap + PPTC + 2804 100KV (5.1 Ohm @ -30C)
+.title Extreme-Rugged -30C Circuit Simulation
+
+* 3S Molicel P28A Pack at -30C (10.8V loaded, 0.54 Ohm internal resistance)
+Vbat v_bat 0 DC 10.8
+Rbat v_bat v_bus 0.54
+
+* 1000uF Low-ESR Bulk Capacitor
+Cbulk v_bus 0 1000u IC=10.8
+
+* Main 15A Blade Fuse (10 mOhm)
+Rfuse v_bus v_rail 0.01
+
+* 4x Parallel 2804 100KV Motors at -30C (copper R drops ~21% to 5.1 Ohm + 0.12 Ohm PPTC = 5.22 Ohm)
+R_m1 v_rail n1 5.22
+L_m1 n1 0 2.5m IC=0
+
+R_m2 v_rail n2 5.22
+L_m2 n2 0 2.5m IC=0
+
+R_m3 v_rail n3 5.22
+L_m3 n3 0 2.5m IC=0
+
+R_m4 v_rail n4 5.22
+L_m4 n4 0 2.5m IC=0
+
+.tran 10u 10m UIC
+
+.control
+run
+meas tran i_m1_max MAX I(R_m1) from=2m to=10m
+meas tran v_rail_min MIN V(v_rail) from=2m to=10m
+echo "=== EXTREME -30C CIRCUIT RESULTS ==="
+print i_m1_max v_rail_min
+quit
+.endc
+.end

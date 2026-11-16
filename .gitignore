@@ -1,0 +1,13 @@
+# Compiled C++ binaries
+buggy_sim
+extreme_buggy_sim
+
+# LaTeX intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.xdv
+
+# macOS
+.DS_Store

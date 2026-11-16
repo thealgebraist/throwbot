@@ -1,0 +1,33 @@
+* 20cm Outrunner Buggy: 3S 18650 + 1000uF Cap + DRV8313 PWM -> 5010 (0.2 Ohm) vs 2804 (6.5 Ohm)
+.title Outrunner Buggy Power & Coil Current Simulation
+
+* 3S 18650 Pack (11.1V nominal, 60 mOhm internal resistance)
+Vbat v_bat 0 DC 11.1
+Rbat v_bat v_bus 0.06
+
+* 1000uF Low-ESR Bulk Decoupling Capacitor (absorbs PWM spikes)
+Cbulk v_bus 0 1000u IC=11.1
+
+* Case A: 5010 360KV Motor (0.2 Ohm, 35 uH) with SimpleFOC voltage_limit = 1.2V (10.8% duty @ 25kHz)
+Vpwm_5010 n_5010 0 PULSE(0 11.1 0 10n 10n 4.32u 40u)
+R_5010 n_5010 n_5010_L 0.20
+L_5010 n_5010_L 0 35u IC=0
+
+* Case B: 2804 100KV Gimbal Motor (6.5 Ohm, 2.5 mH) at full 11.1V (100% duty)
+Vpwm_2804 n_2804 0 DC 11.1
+R_2804 n_2804 n_2804_L 6.5
+L_2804 n_2804_L 0 2.5m IC=0
+
+.tran 1u 2m UIC
+
+.control
+run
+meas tran i5010_avg AVG I(Vpwm_5010) from=1m to=2m
+meas tran i5010_max MAX I(Vpwm_5010) from=1m to=2m
+meas tran i2804_avg AVG I(Vpwm_2804) from=1m to=2m
+meas tran vbus_min MIN V(v_bus) from=1m to=2m
+echo "=== SIMULATION RESULTS ==="
+print i5010_avg i5010_max i2804_avg vbus_min
+quit
+.endc
+.end
